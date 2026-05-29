@@ -1,6 +1,7 @@
 import cv2
 from camera_manager import CameraManager
 from face_detector import FaceDetection
+from filters.filtro_nariz import FiltroNariz
 
 
 def main():
@@ -21,6 +22,7 @@ def main():
 
     camera = CameraManager(selected)
     detector = FaceDetection()
+    filter_nose = FiltroNariz(detector)
 
     print(f"Cámara {selected} seleccionada y abierta.")
     print("Presiona 'q' para cerrar la vista previa.")
@@ -32,8 +34,9 @@ def main():
                 print("No se pudo leer el frame de la cámara.")
                 break
 
-            output = detector.draw_face(frame)
-            cv2.imshow("Malla facial", output)
+            faces = detector.detect_face(frame)
+            output = filter_nose.apply(frame, faces)
+            cv2.imshow("Filtro nariz", output)
 
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
